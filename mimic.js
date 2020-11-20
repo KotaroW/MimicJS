@@ -8,7 +8,7 @@
 
 
 /********************
- * Object prototypes - to be inherited by derived objects
+ * Object - to be inherited by derived objects
  ********************/
 
 Object.prototype.__isStringNonObjectValuePair = function (arg1, arg2) {
@@ -20,28 +20,28 @@ Object.prototype.__isObjectArgument = function (arg) {
 };
 
 /********************
- * HTMLDocument  prototypes
+ * HTMLDocument
  ********************/
 /***
  * document.getElementById
  ***/
 HTMLDocument.prototype.__$id = function (elementId) {
     return this.getElementById (elementId);   
-}
+};
 
 /***
  * document.querySelector
  ***/
 HTMLDocument.prototype.__$query = function (selector) {
     return this.querySelector (selector);
-}
+};
 
 /***
  * document.querySelectorAll
  ***/
 HTMLDocument.prototype.__$queryAll = function (selector) {
     return this.querySelectorAll (selector);
-}
+};
 
 /***
  * document.getElementsByTagName
@@ -51,7 +51,7 @@ HTMLDocument.prototype.__$tag = function (tagName, element) {
     element = (element) ? element : this;
     
     return element.getElementsByTagName (tagName);
-}
+};
 
 /***
  * document.getElementsByClassName
@@ -61,11 +61,11 @@ HTMLDocument.prototype.__$class = function (className, element) {
     element = (element) ? element : this;
     
     return element.getElementsByClassName (className);
-}
+};
 
 
 /********************
- * HTMLElement (and its sub classes) prototypes
+ * HTMLElement (and its sub classes)
  * returns "this" to allow method call chaining
  ********************/
 
@@ -74,14 +74,14 @@ HTMLDocument.prototype.__$class = function (className, element) {
  ***/
 HTMLElement.prototype.__$tag = function (tagName) {
     return document.__$tag (tagName, this);
-}
+};
 
 /***
  * shortcut for HTMLElements.getEelementsByTagName
  ***/
 HTMLElement.prototype.__$class = function (className) {
     return document.__$class (className, this);
-}
+};
 
 /***
  * set attribute(s)
@@ -228,17 +228,100 @@ HTMLTableElement.prototype.__populate = function (tableHeaders, tableData, callb
     
     return this;
     
+};
+
+HTMLTableElement.prototype.__getColumnData = function (columnIndex) {
+    let columnData = [];
+    
+    let datarows = this.__$tag ("tr");
+    if (!!datarows.__toArray) {
+        datarows = datarows.__toArray();
+        // first row must be headers so discard it
+        datarows.shift();
+        
+        datarows.forEach((datarow) => {
+           columnData.push(datarow.__$tag ("td")[columnIndex].__text()); 
+        });
+        
+    }
+    
+    return columnData;
+    
 }
 
+HTMLTableElement.prototype.__sort = function (headerElement, columnIndex) {
+    const ASCEND = "ascend";
+    const DESCEND = "descend";
+    
+    
+    if (this.__sorColumnIndex == undefined || this.__sorColumnIndex != columnIndex) {
+        this.__sortOrder = ASCEND;
+    } else {
+        this.__sortOrder = (this.__sortOrder == ASCEND) ? DESCEND : ASCEND;
+    }
+    
+    this.__sorColumnIndex = columnIndex;
+
+    let datarows = this.__$tag ("tr");
+   
+    if (!!datarows.__toArray) {
+        datarows = datarows.__toArray ();
+        datarows.shift ();
+        
+        for (let oIndex = 0; oIndex < datarows.length; oIndex++) {
+            let candidateIndex = oIndex;
+            for (let iIndex = oIndex + 1; iIndex <  datarows.length; iIndex++) {
+                let candidateValue = datarows[candidateIndex].__$tag ("td")[columnIndex].__text();
+                let challengerValue = datarows[iIndex].__$tag ("td")[columnIndex].__text();
+                
+////////////HERE                 alert (candidateValue + " " + challengerValue);
+                
+                if (this.__sortOrder == ASCEND) {
+                    if (datarows[iIndex].__$tag ("td")[columnIndex].__text() < datarows[candidateIndex].__$tag ("td")[columnIndex].__text()) {
+                        candidateIndex = iIndex;
+                    }
+                }
+                else {
+                      if (datarows[iIndex].__$tag ("td")[columnIndex].__text() > datarows[candidateIndex].__$tag ("td")[columnIndex].__text()) {
+                        candidateIndex = iIndex;
+                    }              
+                }
+            }
+
+            let tmpRow = datarows[oIndex];
+            datarows[oIndex] = datarows[candidateIndex];
+            datarows[candidateIndex] = tmpRow;
+        }
+    }
+    
+    console.log(datarows);
+}
+
+
 /********************
- * HTMLCollection prototypes
+ * HTMLInputElement
+ ********************/
+HTMLInputElement.__val = function (newValue) {
+    if (newValue != undefined) {
+        return this.value;
+    }
+    else {
+        this.oldValue = this.value;
+        this.value =newValue;
+        return this;
+    }
+};
+
+
+/********************
+ * HTMLCollection
  ********************/
 /***
  * convert HTMLCollection Object to Array Object
  ***/
 HTMLCollection.prototype.__toArray = function () {
     return Array.prototype.slice.call (this);
-}
+};
 
 
 /********************
@@ -277,6 +360,41 @@ Array.__range = function (start, end, by) {
     }
     
     return arr;
-}
+};
 
 
+/********************
+ * Date
+ ********************/
+/***
+ * calculate age as of today
+ ***/
+Date.prototype.calcAge = function () {
+    // decompose two dates into year, month and date
+    var dobComponents = getDateComponents(this);
+    var todayComponents = getDateComponents(new Date());
+    
+    var age = todayComponents.year - dobComponents.year;
+    
+    // if today's month and date both must be greater than or equal to those of today
+    // otherwise subtact one from  the age
+    if ((todayComponents.month < dobComponents.month) || (todayComponents.month == dobComponents.month && todayComponents.date < dobComponents.date)) {
+        --age;
+    }
+    
+    return age;
+    
+    // function get year, month and day components from a date object
+    // @param: dateobj -> object (Date)
+    function getDateComponents(dateobj) {
+        // argument must be a date object
+        if (((typeof dateobj).toLowerCase() != "object") || dateobj.constructor.name != "Date") {
+            return null;
+        }
+
+        // remember getMonth() returns the month index, starting zero
+        var components = {year : dateobj.getFullYear(), month : dateobj.getMonth() + 1, date : dateobj.getDate() };
+
+        return components;
+    }    
+};
