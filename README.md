@@ -57,7 +57,7 @@ var table = document.createElement ("table")
             let headers = element.__$tag ('th'); // get a th collection
 
             if (!!headers.__toArray) { // true means it's a collection
-                headers = headers.__toArray(headers); // convert to Array
+                headers = headers.__toArray(); // convert to Array
                 headers.forEach ((header) => {
                     header.css({
                         background : "#369",
