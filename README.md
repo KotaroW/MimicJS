@@ -80,3 +80,6 @@ var table = document.createElement ("table")
         }
     );
 ```
+
+## Demo &amp; Example page
+Please see [this](https://kotarow.github.io/MimicJS/mimicdemo.html)
