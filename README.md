@@ -85,4 +85,4 @@ var table = document.createElement ("table")
 
 ## Resources
 - [Demo page](https://kotarow.github.io/MimicJS/mimicdemo.html)
-- [Source code](https://kotarow.github.io/MimicJS/mimicdemo.html)
+- [Source code](https://kotarow.github.io/MimicJS/mimic.js)
