@@ -17,29 +17,34 @@ In an attempt to distinguish the methods from others, method names start with a 
 
 ## Method lists
 - Object
-    - Object.__isStringNonObjectValuePair (arg1, arg2)
-    - Object.__isObjectArgument (arg)
+    - Object.__isStringNonObjectValuePair (arg1, arg2) : bool
+    - Object.__isObjectArgument (arg) : bool
 - HTMLDocument
-    - document.__$id (string elementId) => document.getElementById ()
-    - document.__$query (string selector) => document.querySelector ()
-    - document.__$queryAll (string selector) => document.querySelectorAll ()
-    - document.__$tag (string tagName) => document.getElementsByTagName ()
-    - document.__$class (string className) => document.getElementsByClassName ()
+    - document.__$id (string elementId) : HTMLElement|undefined => document.getElementById ()
+    - document.__$query (string selector) : HTMLElement|undefined => document.querySelector ()
+    - document.__$queryAll (string selector) : HTMLElementCollection => document.querySelectorAll ()
+    - document.__$tag (string tagName) : HTMLElementCollection  => document.getElementsByTagName ()
+    - document.__$class (string className) : HTMLElementCollection => document.getElementsByClassName ()
 - HTMLElement (and its sub-classes)
-    - htmlElementInstance.__$tag (string tagName, HTMLElement element) => htmlElement.getElementsByTagName ()
-    - htmlElementInstance.__$class (string className, HTMLElement element) => htmlElement.getElementsByClassName ()
-    - htmlElementInstance.__attr (varargs) => (modified) htmlElement.setAttribute()
-    - htmlElementInstance.__css (varargs) => (modified) htmlElement.style.propertyName = propertyValue
-    - htmlElementInstance.__text (string newText = undefined) => (modified) htmlElement.textContent [= newText]
-    - htmlElementInstance.__html (string newHTML = undefined) => (modified) htmlElement.innerHTML [ = newHTML]
-- HTMLUList (this will be rewriten to accomodate other list types if feasible)
-    - HTMLUListInstance.__populate (array listData, function callback = undefined)
+    - htmlElementInstance.__$tag (string tagName, HTMLElement element) : HTMLElementCollection => htmlElement.getElementsByTagName ()
+    - htmlElementInstance.__$class (string className, HTMLElement element) : HTMLElementCollection => htmlElement.getElementsByClassName ()
+    - htmlElementInstance.__attr (varargs) : HTMLElement => (modified) htmlElement.setAttribute()
+    - htmlElementInstance.__css (varargs) : HTMLElement => (modified) htmlElement.style.propertyName = propertyValue
+    - htmlElementInstance.__text (string newText = undefined)  : HTMLElementCollection|string => (modified) htmlElement.textContent [= newText]
+    - htmlElementInstance.__html (string newHTML = undefined) : HTMLElementCollection|string => (modified) htmlElement.innerHTML [ = newHTML]
+- HTMLUListElement (this will be rewriten to accomodate other list types if feasible)
+    - HTMLUListInstance.__populate (array listData, function callback = undefined) : HTMLUListElement
 - HTMLTableElement
-    - HTMLTableElementInstance.__populate (array tableHeaders, 2D-array tableData, function callback = undefined)
+    - HTMLTableElementInstance.__populate (array tableHeaders, 2D-array tableData, function callback = undefined) : HTMLTableElement
+    - HTMLTableInstance.__sort (HTMLTableCellElement (TH) headerElement, int columnIndex)
+- HTMLInputElement
+    - HTMLInputInstance.__val(newValue = undefiened) : string|HTMLInputElement 
 - HTMLCollection
-    - htmlCollectionInstance.__toArray () => uses Array.prototype.slice.call
+    - htmlCollectionInstance.__toArray (void) => uses Array.prototype.slice.call
 - Array
-    - Array.__range(int start, int end, int step = 1) 
+    - Array.__range(int start, int end, int step = 1)
+- Date
+    - DateObjectInstance.__calcAge (void) : int
 
 ## Example
 ```
