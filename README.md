@@ -45,8 +45,10 @@ In an attempt to distinguish the methods from others, method names start with a 
     - Array.__range(int start, int end, int step = 1)
 - Date
     - DateObjectInstance.__calcAge (void) : int
+- String
+    - string.__isNumber (void) : bool
 
-## Example
+## Usage (Example)
 ```
 var table = document.createElement ("table")
     .__attr({ border : "1" })
@@ -81,5 +83,6 @@ var table = document.createElement ("table")
     );
 ```
 
-## Demo &amp; Example page
-Please see [this](https://kotarow.github.io/MimicJS/mimicdemo.html)
+## Resources
+- [Demo page](https://kotarow.github.io/MimicJS/mimicdemo.html)
+- [Source code](https://kotarow.github.io/MimicJS/mimicdemo.html)
