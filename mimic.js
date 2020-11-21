@@ -248,11 +248,20 @@ HTMLTableElement.prototype.__getColumnData = function (columnIndex) {
     return columnData;
     
 }
-
+/***
+ * sort table given index by value
+ * @param HTMLTableCellElement (th) headerElement
+ * @param int columnIndex
+ ***/
 HTMLTableElement.prototype.__sort = function (headerElement, columnIndex) {
+    // sort orders
     const ASCEND = "ascend";
     const DESCEND = "descend";
     
+    const ARROW_UP = "&#8593";
+    const ARROW_DOWN = "&#8595";
+    
+    const SORT_ARROW_CLASS_NAME = "__sortarrow";
     
     if (this.__sorColumnIndex == undefined || this.__sorColumnIndex != columnIndex) {
         this.__sortOrder = ASCEND;
@@ -266,23 +275,35 @@ HTMLTableElement.prototype.__sort = function (headerElement, columnIndex) {
    
     if (!!datarows.__toArray) {
         datarows = datarows.__toArray ();
-        datarows.shift ();
+        // header row will be reused down there.
+        let headerRow = datarows.shift ();
+        
+        // remove the previous arrow (sort order indicator) if exists
+        let arrowClassElements = headerRow.__$class (SORT_ARROW_CLASS_NAME);
+        if (arrowClassElements.length > 0) {
+            let arrowElement = arrowClassElements[0];
+            arrowElement.parentNode.removeChild (arrowElement);
+        }
+        
         
         for (let oIndex = 0; oIndex < datarows.length; oIndex++) {
             let candidateIndex = oIndex;
             for (let iIndex = oIndex + 1; iIndex <  datarows.length; iIndex++) {
                 let candidateValue = datarows[candidateIndex].__$tag ("td")[columnIndex].__text();
+                // for number comparison
+                candidateValue = candidateValue.__isNumber () ? parseFloat (candidateValue) : candidateValue;
+              
                 let challengerValue = datarows[iIndex].__$tag ("td")[columnIndex].__text();
-                
-////////////HERE                 alert (candidateValue + " " + challengerValue);
-                
+                // for number comparison
+                challengerValue = challengerValue.__isNumber () ? parseFloat (challengerValue) : challengerValue;
+
                 if (this.__sortOrder == ASCEND) {
-                    if (datarows[iIndex].__$tag ("td")[columnIndex].__text() < datarows[candidateIndex].__$tag ("td")[columnIndex].__text()) {
+                    if (challengerValue < candidateValue) {
                         candidateIndex = iIndex;
                     }
                 }
                 else {
-                      if (datarows[iIndex].__$tag ("td")[columnIndex].__text() > datarows[candidateIndex].__$tag ("td")[columnIndex].__text()) {
+                      if (challengerValue > candidateValue) {
                         candidateIndex = iIndex;
                     }              
                 }
@@ -292,9 +313,16 @@ HTMLTableElement.prototype.__sort = function (headerElement, columnIndex) {
             datarows[oIndex] = datarows[candidateIndex];
             datarows[candidateIndex] = tmpRow;
         }
+        // update the table
+        this.innerHTML = "";
+        this.appendChild (headerRow);
+        datarows.forEach ((datarow) => {
+           this.appendChild (datarow); 
+        });
+        
+        headerElement.__html (headerElement.__text () + ' <span class="' + SORT_ARROW_CLASS_NAME + '">' + (this.__sortOrder == ASCEND ? ARROW_DOWN : ARROW_UP) + "</span>");
     }
     
-    console.log(datarows);
 }
 
 
@@ -397,4 +425,17 @@ Date.prototype.calcAge = function () {
 
         return components;
     }    
+};
+
+
+/********************
+ * String
+ ********************/
+/***
+ * determines whether the string value is a valid number
+ ***/
+String.prototype.__isNumber = function () {
+
+    return !isNaN (this);
+    
 };
