@@ -35,6 +35,9 @@
     document.__$id("paragraph").appendChild(p);
 
     // create an ordered list
+    p = document.createElement("p").__html("The unordered list below has created by <code>HTMLUListElement.__populate (dataArray, callbackFunction)</code>.");
+    document.__$query("div:nth-of-type(2)").appendChild(p);
+
     var links = document.createElement("ul")
         .__populate (
         [
@@ -51,11 +54,10 @@
     ); 
     document.__$query("div:nth-of-type(2)").appendChild(links);
     
-    
-    p = document.createElement ("p").__html ("This example creates a table element, populates it with data, and adds a sort listener. Click a table header to sort.");
+    // create a table    
+    p = document.createElement("p").__html ("This example creates a table element, populates it with data, and adds a sort listener. Click a table header to sort.");
     document.__$class ("mytable")[0].appendChild (p);
     
-    // create a table
     var table = document.createElement ("table")
         .__attr ("border", "1")
         .__css ("border-collapse", "collapse")
@@ -105,7 +107,6 @@
             }
         );
         document.__$class("mytable")[0].appendChild(table);
-    
 </script>
 
 </body>
