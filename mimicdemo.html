@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mimic.js - Demo</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+        h1, h2, h3 {
+            font-weight : normal;
+        }
+        .test {
+            color : cadetblue;
+        }
+    </style>
+    
+    <script src="mimic.js"></script>
+</head>
+    
+<body>
+    <h1>Examples</h1>
+    <div id="paragraph">
+        <h2>Paragraph</h2>
+    </div>
+    <div>
+        <h2>Ordered List</h2>
+    </div>
+    <div class="mytable">
+        <h2>Table</h2>
+    </div>
+
+    
+<script>
+    // create and append a paragraph
+    var p = document.createElement("p").__html("This paragraph has been created and added by <code>documen.createElement (\"p\").__html (htlmContent)</code>.");
+    document.__$id("paragraph").appendChild(p);
+
+    // create an ordered list
+    var links = document.createElement("ul")
+        .__populate (
+        [
+            '<a href="http://www.google.com" target="_blank">bar</a>',
+            "var",
+            "foo",
+            "Poly Poly"
+        ],
+        function (UListElem) {
+            var items = UListElem.getElementsByTagName("li");
+            items = items.__toArray();
+            items.forEach (item => { item.className = "test"; } );
+        }
+    ); 
+    document.__$query("div:nth-of-type(2)").appendChild(links);
+    
+    
+    p = document.createElement ("p").__html ("This example creates a table element, populates it with data, and adds a sort listener. Click a table header to sort.");
+    document.__$class ("mytable")[0].appendChild (p);
+    
+    // create a table
+    var table = document.createElement ("table")
+        .__attr ("border", "1")
+        .__css ("border-collapse", "collapse")
+        .__populate (
+            ["ID", "Name", "Email", "Age"], 
+            [
+                [1, "Kitaro", "kitaro@gegege.com", 350],
+                [2, "Nekomusume", "neko@gegege.com", 400],
+                [3, "Medama no Oyadi", "medama@gegege.com", 2100],
+                [4, "Nurikabe", "kabe@gegege.com", 1890],
+                [5, "Nezumiotoko", "kozo@gegege.com", 1000]
+            ],
+            function (table) {
+                let headers = table.__$tag("th");
+                if (!!headers.__toArray) {
+                    headers = headers.__toArray();
+                    var headerIndex = 0;
+                    
+                    headers.forEach(header => { 
+                        header.__css({ background:"#369", color: "#fff", cursor : "pointer", padding : "0.25rem 0.5rem" });
+                        addListener(header, table, headerIndex);
+                        ++headerIndex;
+                    });
+                    
+                    function addListener(element, listenerElement, index) {
+                        element.addEventListener (
+                            "click",
+                            function () {
+                                listenerElement.__sort(this, index);
+                            },
+                            false
+                        );
+                    }
+                }
+                
+                let cells = table.__$tag("td");
+                if (!!cells.__toArray) {
+                    cells = cells.__toArray();                
+                    cells.forEach((cell) => {
+                        cell.__css("padding", "0.25rem 0.5rem");
+                        if (/^\S+@\S+$/.test(cell.__text())) {
+                            cell.__html('<a href="mailto:' + cell.__text() + '">' + cell.__text() + '</a>');
+                        }
+                        
+                    });
+                }
+            }
+        );
+        document.__$class("mytable")[0].appendChild(table);
+    
+</script>
+
+</body>
+</html>
