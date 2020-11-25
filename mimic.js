@@ -4,6 +4,9 @@
  * date         : 20th November, 2020
  * description  :
  *     A JS Library
+ *     Format:
+ *     / *@returnValueType* /
+ *     MethodName (/ *@argumentType* / arg1 / *@=defaultValue * / [,/ *@argumentType* /...])
  **********************************************************************/
 
 
@@ -11,83 +14,153 @@
  * Object - to be inherited by derived objects
  ********************/
 
-Object.prototype.__isStringNonObjectValuePair = function (arg1, arg2) {
+/*@boolean*/
+Object.prototype.__isStringNonObjectValuePair = function (/*@mixed*/ arg1, /*mixed*/ arg2) {
     return (typeof arg1).toLowerCase() == "string" && (typeof arg2).toLowerCase() != "object";
 };
 
-Object.prototype.__isObjectArgument = function (arg) {
+/*@boolean*/
+Object.prototype.__isObjectArgument = function (/*@mixed*/ arg) {
 	return (typeof arg).toLowerCase() == "object";
 };
 
+
+
 /********************
- * HTMLDocument
+ * Window
  ********************/
-/***
+/*@void*/
+Window.prototype.__alert = function (/*@string*/ msgHTML) {
+    let mask = document.createElement ("div").__css ({
+        display : "flex",
+        alignItems : "center",
+        justifyContent : "center",
+        position: "absolute",
+        zIndex : 200,
+        top : 0,
+        bottom : 0,
+        left : 0,
+        right : 0,
+        background: "#fff",
+        opacity : 0.9
+    });
+
+    let alertBox = document.createElement ("div").__css ({
+        border : "solid 1px #369",
+        padding : "0.5rem 1rem",
+        textAlign : "center",
+        minWidth : "200px"
+    });
+    
+    let msgElement = document.createElement ("p").__html (msgHTML);
+    let okButton = document.createElement ("button").__text ("OK").__css({
+        font : "inherit",
+        appearance : "none",
+        "-moz-appearance" : "none",
+        color : "#fff",
+        border: "solid 1px #ccc",
+        borderRadius : "0",
+        background: "#369",
+        padding : "0.5rem 1rem",
+        cursor : "pointer"
+        
+    });
+    okButton.addEventListener(
+        "click",
+        function () {
+            document.body.removeChild(this.parentNode.parentNode);
+            document.body.__css ("overflow", "auto");
+        },
+        false
+    )
+    
+    alertBox.appendChild (msgElement);
+    alertBox.appendChild (okButton);
+    mask.appendChild (alertBox);
+    document.body.appendChild (mask);
+    document.body.__css ("overflow", "hidden");
+};
+
+
+
+/****************************************
+ * HTMLDocument
+ ****************************************/
+
+/**********
  * document.getElementById
- ***/
-HTMLDocument.prototype.__$id = function (elementId) {
+ **********/
+/*@HTMLElement|undefined*/
+HTMLDocument.prototype.__$id = function (/*@string*/ elementId) {
     return this.getElementById (elementId);   
 };
 
-/***
+/**********
  * document.querySelector
- ***/
-HTMLDocument.prototype.__$query = function (selector) {
+ **********/
+/*@HTMLElement|undefined*/
+HTMLDocument.prototype.__$query = function (/*@string*/ selector) {
     return this.querySelector (selector);
 };
 
-/***
+/**********
  * document.querySelectorAll
- ***/
-HTMLDocument.prototype.__$queryAll = function (selector) {
+ **********/
+/*@HTMLElementCollection*/
+HTMLDocument.prototype.__$queryAll = function (/*@string*/ selector) {
     return this.querySelectorAll (selector);
 };
 
-/***
+/**********
  * document.getElementsByTagName
  * this method is shared by HTMLElement
- ***/
-HTMLDocument.prototype.__$tag = function (tagName, element) {
+ **********/
+/*@HTMLElementCollection*/
+HTMLDocument.prototype.__$tag = function (/*@string*/ tagName, /*@HTMLElement*/ element) {
     element = (element) ? element : this;
     
     return element.getElementsByTagName (tagName);
 };
 
-/***
+/**********
  * document.getElementsByClassName
  * this method is shared by HTMLElement
- ***/
-HTMLDocument.prototype.__$class = function (className, element) {
+ **********/
+/*@HTMLElementCollection*/
+HTMLDocument.prototype.__$class = function (/*@string*/ className, /*@HTMLElement*/ element) {
     element = (element) ? element : this;
     
     return element.getElementsByClassName (className);
 };
 
 
-/********************
+
+/****************************************
  * HTMLElement (and its sub classes)
  * returns "this" to allow method call chaining
- ********************/
+ ****************************************/
 
-/***
- * shortcut for HTMLElements.getEelementsByTagName
- ***/
-HTMLElement.prototype.__$tag = function (tagName) {
+/**********
+ * HTMLElements.getEelementsByTagName
+ **********/
+/*@HTMLElementCollection*/
+HTMLElement.prototype.__$tag = function (/*@string*/tagName) {
     return document.__$tag (tagName, this);
 };
 
-/***
- * shortcut for HTMLElements.getEelementsByTagName
- ***/
+/**********
+ * HTMLElements.getEelementsByTagName
+ **********/
 HTMLElement.prototype.__$class = function (className) {
     return document.__$class (className, this);
 };
 
-/***
+/**********
  * set attribute(s)
  * argument pattern 1: (string property, non-object peropertyValue )
  * argument pattern 2: (object { property : propertyValue[, ...]})
- ***/
+ ***********/
+/*@HTMLElement*/
 HTMLElement.prototype.__attr = function (...varargs) {
 
     // for argument pattern 1
@@ -103,11 +176,12 @@ HTMLElement.prototype.__attr = function (...varargs) {
     return this;
 };
 
-/***
+/**********
  * styling method
  * argument pattern 1: (string property, non-object peropertyValue )
  * argument pattern 2: (object { property : propertyValue[, ...]})
-***/
+**********/
+/*@HTMLElement*/
 HTMLElement.prototype.__css = function(...varargs) {
 
     // for argument pattern 1
@@ -123,11 +197,12 @@ HTMLElement.prototype.__css = function(...varargs) {
     return this;
 };
 
-/***
+/**********
  * text content getter/setter
- * the setter stores last content
- ***/
-HTMLElement.prototype.__text = function(newText) {
+ * setter stores the previous content
+ **********/
+/*@HTMLElement*/
+HTMLElement.prototype.__text = function(/*@string*/ newText /*@=undefined*/) {
 
     // if no arguments, return the current textContent
 	if (newText == undefined) {
@@ -141,11 +216,12 @@ HTMLElement.prototype.__text = function(newText) {
     }
 };
 
-/***
+/**********
  * inner html getter/setter
  * the setter stores last html content
- ***/
-HTMLElement.prototype.__html = function(newHTML) {
+ **********/
+/*@HTMLElement*/
+HTMLElement.prototype.__html = function(/*@string*/ newHTML /*@=undefined*/) {
 
     // if no arguments, return the current textContent
 	if (newHTML == undefined) {
@@ -159,11 +235,12 @@ HTMLElement.prototype.__html = function(newHTML) {
     }
 };
 
-/***
+/***********
  * populate a HTMLUListElement with list items
  * callback allows the caller to modify the HTMLUListElement and its LIElement
- ***/
-HTMLUListElement.prototype.__populate = function (listData, callback) {
+ **********/
+/*@HTMLUListElement*/
+HTMLUListElement.prototype.__populate = function (/*@string*/ listData, /*@function*/ callback /*@=undefined*/) {
     if (!Array.isArray (listData)) {
         return this;
     }
@@ -180,13 +257,14 @@ HTMLUListElement.prototype.__populate = function (listData, callback) {
     return this;
 };
 
-/***
+/**********
  * populates HTMLTableElement
  * @param: tableHeaders -> Array (single dimention)
  * @param: tableData -> Array (two dimentional)
  * @param: callback -> function pointer
- ***/
-HTMLTableElement.prototype.__populate = function (tableHeaders, tableData, callback) {
+ **********/
+/*@THMLTableElement*/
+HTMLTableElement.prototype.__populate = function (/*@array*/ tableHeaders, /*@array (two demensional)*/ tableData, /*@function*/ callback /*@=undefined*/) {
     let tbody = document.createElement ("tbody");
     let tr = null;
     
@@ -230,7 +308,10 @@ HTMLTableElement.prototype.__populate = function (tableHeaders, tableData, callb
     
 };
 
-HTMLTableElement.prototype.__getColumnData = function (columnIndex) {
+/**********
+ **********/
+/*@array*/
+HTMLTableElement.prototype.__getColumnData = function (/*@unsigned int*/ columnIndex) {
     let columnData = [];
     
     let datarows = this.__$tag ("tr");
@@ -248,12 +329,14 @@ HTMLTableElement.prototype.__getColumnData = function (columnIndex) {
     return columnData;
     
 }
-/***
+
+/**********
  * sort table given index by value
  * @param HTMLTableCellElement (th) headerElement
  * @param int columnIndex
- ***/
-HTMLTableElement.prototype.__sort = function (headerElement, columnIndex) {
+ **********/
+/*@void*/
+HTMLTableElement.prototype.__sort = function (/*HTMLTableCellElement (TH)*/ headerElement, /*@unsigned int*/ columnIndex) {
     // sort orders
     const ASCEND = "ascend";
     const DESCEND = "descend";
@@ -326,10 +409,13 @@ HTMLTableElement.prototype.__sort = function (headerElement, columnIndex) {
 }
 
 
-/********************
+
+/****************************************
  * HTMLInputElement
- ********************/
-HTMLInputElement.__val = function (newValue) {
+ ****************************************/
+
+/*@string|HTMLInputElement*/
+HTMLInputElement.__val = function (/*@string*/ newValue /*@=undefined*/) {
     if (newValue != undefined) {
         return this.value;
     }
@@ -341,30 +427,31 @@ HTMLInputElement.__val = function (newValue) {
 };
 
 
+
 /********************
  * HTMLCollection
  ********************/
-/***
+/**********
  * convert HTMLCollection Object to Array Object
- ***/
+ **********/
+/*@array*/
 HTMLCollection.prototype.__toArray = function () {
     return Array.prototype.slice.call (this);
 };
 
 
-/********************
+
+/****************************************
  * Array prototypes
- ********************/
-/***
+ ****************************************/
+/**********
  * range generator
- * @param int start
- * @param int end
- * @param unsigned int by
  * "start" must be smaller than "end"
  * "by" will be Math.abs()-ed
  * the range does not include "end"
- ***/
-Array.__range = function (start, end, by) {
+ **********/
+/*@array (int)*/
+Array.__range = function (/*@int*/ start, /*@int*/ end, /*@int*/ by) {
     // coerce to integer
     start = parseInt(start);
     end = parseInt(end);
@@ -391,13 +478,15 @@ Array.__range = function (start, end, by) {
 };
 
 
-/********************
+
+/****************************************
  * Date
- ********************/
-/***
+ ****************************************/
+/**********
  * calculate age as of today
- ***/
-Date.prototype.calcAge = function () {
+ **********/
+/*@unsigned int*/
+Date.prototype.__calcAge = function () {
     // decompose two dates into year, month and date
     var dobComponents = getDateComponents(this);
     var todayComponents = getDateComponents(new Date());
@@ -427,15 +516,82 @@ Date.prototype.calcAge = function () {
     }    
 };
 
+/**********
+ * returns the number of days for the Date object
+ *** (Notice) this is an instance method ***
+ **********/
+Date.prototype.__numDays = function () {
+	return Date.__numDays (this.getMonth () + 1, this.getFullYear ());
+};
 
-/********************
+/**********
+ * returns the number of days for the given month (and year)
+ *** (Notice) this is an Object method ***
+ **********/
+/*@unsigned int|undefined*/
+Date.__proto__.__numDays = function (/*@unsigned int*/ month, /*unsigned int*/ year) {
+
+    switch (month) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            return 31;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            return 30;
+        case 2:
+            if (year == undefined)
+                return 28;
+            return (((year % 4 == 0) && (year % 100 !=0)) || (year % 400)) ? 29 : 28;
+        default:
+            return undefined;
+    }
+};
+
+
+
+/****************************************
  * String
- ********************/
-/***
+ ****************************************/
+/**********
  * determines whether the string value is a valid number
- ***/
+ **********/
+/*@boolean*/
 String.prototype.__isNumber = function () {
 
     return !isNaN (this);
     
+};
+
+
+
+/****************************************
+ * JSON Object
+ ****************************************/
+/**********
+ * data getter
+ ********/
+/*@Promise*/
+JSON.__proto__.__get = async (/*@string*/ url) => {
+    const response = await fetch (url);
+
+    if (response.ok) {
+        try {
+            const data = await response.json ();
+            return Promise.resolve (data);
+        }
+        // status ok but no data or illegal data contents
+        catch (err) {
+            return Promise.reject (err);
+        }
+    }
+    else {
+        return Promise.reject (response);
+    }
 };
