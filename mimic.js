@@ -15,7 +15,7 @@
  ********************/
 
 /*@boolean*/
-Object.prototype.__isStringNonObjectValuePair = function (/*@mixed*/ arg1, /*mixed*/ arg2) {
+Object.prototype.__isStringNonObjectValuePair = function (/*@mixed*/ arg1, /*@mixed*/ arg2) {
     return (typeof arg1).toLowerCase() == "string" && (typeof arg2).toLowerCase() != "object";
 };
 
@@ -151,7 +151,8 @@ HTMLElement.prototype.__$tag = function (/*@string*/tagName) {
 /**********
  * HTMLElements.getEelementsByTagName
  **********/
-HTMLElement.prototype.__$class = function (className) {
+/*@HTMLElementCollection*/
+HTMLElement.prototype.__$class = function (/*@string*/ className) {
     return document.__$class (className, this);
 };
 
