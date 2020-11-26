@@ -419,29 +419,16 @@ HTMLInputElement.__val = function (/*@string*/ newValue /*@=undefined*/) {
 
 
 
-/********************
- * HTMLCollection
- ********************/
+/****************************************
+ * HTMLCollection/NodeList
+ ****************************************/
 /**********
- * convert HTMLCollection Object to Array Object
+ * convert HTMLCollection/NodeList Object to Array Object
  **********/
-/*@array*/
-HTMLCollection.prototype.__toArray = function () {
+/*@array(HTMLElement)*/
+HTMLCollection.prototype.__toArray = NodeList.prototype.__toArray = function () {
     return Array.prototype.slice.call (this);
 };
-
-
-
-/********************
- * NodeList
- ********************/
-/**********
- * convert NodeList to Array Object
- **********/
-/*@array*/
-NodeList.prototype.__toArray = function () {
-    return Array.prototype.slice.call (this);
-}
 
 
 
@@ -524,6 +511,7 @@ Date.prototype.__calcAge = function () {
  * returns the number of days for the Date object
  *** (Notice) this is an instance method ***
  **********/
+/*@int*/
 Date.prototype.__numDays = function () {
 	return Date.__numDays (this.getMonth () + 1, this.getFullYear ());
 };
