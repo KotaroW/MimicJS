@@ -112,49 +112,43 @@ HTMLDocument.prototype.__$queryAll = function (/*@string*/ selector) {
 };
 
 /**********
- * document.getElementsByTagName
- * this method is shared by HTMLElement
+ * document|HTMLElement.getElementsByTagName
  **********/
 /*@HTMLElementCollection*/
-HTMLDocument.prototype.__$tag = function (/*@string*/ tagName, /*@HTMLElement*/ element) {
-    element = (element) ? element : this;
+HTMLDocument.prototype.__$tag = HTMLElement.prototype.__$tag = function (/*@string*/ tagName) {
     
-    return element.getElementsByTagName (tagName);
+    return this.getElementsByTagName (tagName);
+
 };
 
 /**********
- * document.getElementsByClassName
- * this method is shared by HTMLElement
+ * document|HTMLElement.getElementsByClassName
  **********/
 /*@HTMLElementCollection*/
-HTMLDocument.prototype.__$class = function (/*@string*/ className, /*@HTMLElement*/ element) {
-    element = (element) ? element : this;
+HTMLDocument.prototype.__$class = HTMLElement.prototype.__$class = function (/*@string*/ className) {
     
-    return element.getElementsByClassName (className);
+    return this.getElementsByClassName (className);
+
 };
 
+/**********
+ * append multiple child elements at one go
+ **********/
+/*@Document|@HTMLElement*/
+HTMLDocument.prototype.__appendChildren = HTMLElement.prototype.__appendChildren = function (/*@array|@HTMLElementCollection*/ children) {
+        
+    for (let index = 0; index < children.length; index++) {
+        this.appendChild (children[index]);
+    }
+    
+    return this;
+}
 
 
 /****************************************
  * HTMLElement (and its sub classes)
  * returns "this" to allow method call chaining
  ****************************************/
-
-/**********
- * HTMLElements.getEelementsByTagName
- **********/
-/*@HTMLElementCollection*/
-HTMLElement.prototype.__$tag = function (/*@string*/tagName) {
-    return document.__$tag (tagName, this);
-};
-
-/**********
- * HTMLElements.getEelementsByTagName
- **********/
-/*@HTMLElementCollection*/
-HTMLElement.prototype.__$class = function (/*@string*/ className) {
-    return document.__$class (className, this);
-};
 
 /**********
  * set attribute(s)
@@ -237,11 +231,11 @@ HTMLElement.prototype.__html = function(/*@string*/ newHTML /*@=undefined*/) {
 };
 
 /***********
- * populate a HTMLUListElement with list items
- * callback allows the caller to modify the HTMLUListElement and its LIElement
+ * populate a HTMLUListElement/HTMLOListElement with list items
+ * callback allows the caller to modify the ListElement and its LIElement
  **********/
-/*@HTMLUListElement*/
-HTMLUListElement.prototype.__populate = function (/*@string*/ listData, /*@function*/ callback /*@=undefined*/) {
+/*@HTMLUListElement|@HTMLOListElement*/
+HTMLUListElement.prototype.__populate = HTMLOListElement.prototype.__populate = function (/*@string*/ listData, /*@function*/ callback /*@=undefined*/) {
     if (!Array.isArray (listData)) {
         return this;
     }
@@ -258,11 +252,9 @@ HTMLUListElement.prototype.__populate = function (/*@string*/ listData, /*@funct
     return this;
 };
 
+
 /**********
  * populates HTMLTableElement
- * @param: tableHeaders -> Array (single dimention)
- * @param: tableData -> Array (two dimentional)
- * @param: callback -> function pointer
  **********/
 /*@THMLTableElement*/
 HTMLTableElement.prototype.__populate = function (/*@array*/ tableHeaders, /*@array (two demensional)*/ tableData, /*@function*/ callback /*@=undefined*/) {
@@ -333,8 +325,6 @@ HTMLTableElement.prototype.__getColumnData = function (/*@unsigned int*/ columnI
 
 /**********
  * sort table given index by value
- * @param HTMLTableCellElement (th) headerElement
- * @param int columnIndex
  **********/
 /*@void*/
 HTMLTableElement.prototype.__sort = function (/*HTMLTableCellElement (TH)*/ headerElement, /*@unsigned int*/ columnIndex) {
@@ -439,6 +429,19 @@ HTMLInputElement.__val = function (/*@string*/ newValue /*@=undefined*/) {
 HTMLCollection.prototype.__toArray = function () {
     return Array.prototype.slice.call (this);
 };
+
+
+
+/********************
+ * NodeList
+ ********************/
+/**********
+ * convert NodeList to Array Object
+ **********/
+/*@array*/
+NodeList.prototype.__toArray = function () {
+    return Array.prototype.slice.call (this);
+}
 
 
 
@@ -570,6 +573,15 @@ String.prototype.__isNumber = function () {
     
 };
 
+/**********
+ * Uppercase the first letter
+ **********/
+/*@string*/
+String.prototype.__ucfirst = function () {
+
+    return this.charAt (0).toUpperCase () + this.slice (1);
+    
+};
 
 
 /****************************************
