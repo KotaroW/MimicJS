@@ -158,7 +158,7 @@ let table = document.createElement ("table")
 ```
 
 ## Performance
-A comparison test between vanila JS and Mimic JS with the below code.
+A comparison test between vanilla JS and Mimic JS with the below code.
 ```
 <script>
     var start = new Date ().getTime ();
