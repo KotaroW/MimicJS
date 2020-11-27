@@ -1,7 +1,7 @@
 # mimic.js - a public library
 
 ## About
-At one night, I was tinkering a Javascript Date Object prototype to write a method called "calcAge()" which calculates the age given a date of birth (Date Object). Then I started writing more Object/Class methods for Object, HTMLElement and its sub classes, and so on. The purpose of this library (I hope I'm right to call it a library) is "less writing". For example, there might be a program which requires you to call *document.getElementsById()* so many times. I just wanted to simplify the method name like below:
+One night I was tinkering a Javascript Date object prototype to write a method called "calcAge()" which calculates the age given a date of birth (a Date object). Then I started writing more custom Object/Class methods for Object, HTMLElement and its sub classes, and so on. The purpose of this library (I hope I'm right to call it a library) is "less writing". For example, there might be a program which requires you to call *document.getElementsById()* so many times. I just wanted to simplify the method name like below:
 ```
 document.__$id() // double-underscore
 ```
@@ -9,44 +9,61 @@ for document.getElementsByTagName is like:
 ```
 document.__$tag()
 ```
-I borrowed some ideas from JQuery. There are no reasons why I didn't create a separate scope but tweaked the prototypes. I'd like to see how it goes.
+I borrowed some ideas from JS frameworks or other programming languages. There are no reasons why it was the prototypes to be tinkered. I just want to see how it goes.
 
 
 ## Method Naming Convention
 In an attempt to distinguish the methods from others, method names start with a double-underscore. I regard some of the methods as "special". They have a dollar-sign ($) after the double-underscore.
 
+
+## Method notations (Return Types, Parameter Types)
+(in the source file) The format is:
+```
+/*@returnType*/
+Objec/ClassName.prototype.__methodName = function (/*@arg1Type*/ arg1, [/*@arg2Type*/ arg2...]) {
+    // method body
+}
+```
+It's not a must to comply with the argument types. It's just a recommendation.
+
 ## Method lists
-- Object
-    - Object.__isStringNonObjectValuePair (arg1, arg2) : bool
-    - Object.__isObjectArgument (arg) : bool
-- HTMLDocument
-    - document.__$id (string elementId) : HTMLElement|undefined => document.getElementById ()
-    - document.__$query (string selector) : HTMLElement|undefined => document.querySelector ()
-    - document.__$queryAll (string selector) : HTMLElementCollection => document.querySelectorAll ()
-    - document.__$tag (string tagName) : HTMLElementCollection  => document.getElementsByTagName ()
-    - document.__$class (string className) : HTMLElementCollection => document.getElementsByClassName ()
-- HTMLElement (and its sub-classes)
-    - htmlElementInstance.__$tag (string tagName, HTMLElement element) : HTMLElementCollection => htmlElement.getElementsByTagName ()
-    - htmlElementInstance.__$class (string className, HTMLElement element) : HTMLElementCollection => htmlElement.getElementsByClassName ()
-    - htmlElementInstance.__attr (varargs) : HTMLElement => (modified) htmlElement.setAttribute()
-    - htmlElementInstance.__css (varargs) : HTMLElement => (modified) htmlElement.style.propertyName = propertyValue
-    - htmlElementInstance.__text (string newText = undefined)  : HTMLElementCollection|string => (modified) htmlElement.textContent [= newText]
-    - htmlElementInstance.__html (string newHTML = undefined) : HTMLElementCollection|string => (modified) htmlElement.innerHTML [ = newHTML]
-- HTMLUListElement (this will be rewriten to accomodate other list types if feasible)
-    - HTMLUListInstance.__populate (array listData, function callback = undefined) : HTMLUListElement
-- HTMLTableElement
-    - HTMLTableElementInstance.__populate (array tableHeaders, 2D-array tableData, function callback = undefined) : HTMLTableElement
-    - HTMLTableInstance.__sort (HTMLTableCellElement (TH) headerElement, int columnIndex)
-- HTMLInputElement
-    - HTMLInputInstance.__val(newValue = undefiened) : string|HTMLInputElement 
-- HTMLCollection
-    - htmlCollectionInstance.__toArray (void) => uses Array.prototype.slice.call
-- Array
-    - Array.__range(int start, int end, int step = 1)
-- Date
-    - DateObjectInstance.__calcAge (void) : int
-- String
-    - string.__isNumber (void) : bool
+|Object/Class Name| Mothod|Equivalent to|
+|---|---|---|
+|Object| | |
+||Object.prototype.__isStringNonObjectValuePair (mixed arg1, mixed arg2) : boolean|N/A - This is used to check the argment is a key/value pair.|
+||Object.prototype.__isObjectArgument (mixed arg1) : boolean|N/A|
+|HTMLDocument / HTMLElement|||
+||HTMLDocument.prototype.__$id = function (string elementId) : HTMLElement|document.getElementById ()|
+||HTMLDocument.prototype.__$query = function (string selector) : HTMLElement|document.querySelector ()|
+||HTMLDocument.prototype.__$queryAll (string selector) : NodeList|document.querySelectorAll ()|
+||HTMLDocument.prototype.\_\_$tag = HTMLElement.prototype.__$tag = function (string tagName) : HTMLCollection|document.getElementsByTagName ()|
+||HTMLDocument.prototype.\_\_$class = HTMLElement.prototype.__$class = function (string className) : HTMLCollection|document.getElementsByClassName ()|
+||HTMLDocument.prototype.\_\_appendChildren = HTMLElement.prototype.__appendChildren = function (array\|HTMLElementCollection children)|N/A - Modified version of appendChild ()|
+|HTMLElement|||
+||HTMLElement.prototype.__attr = function (...varargs) : HTMLElement| htmlElement.setAttribute () or JQuery.attr ()|
+||HTMLElement.prototype.__css (...varargs) : HTMLElement|JQuery.css()|
+||HTMLElement.prototype.__text (string newText=undefined)  : HTMLElement\|string|JQuery.text ()|
+||HTMLElement.prototype.__html (string newHTML=undefined) : HTMLElementC\|string|JQuery.html ()|
+|HTML UL/OL istElement|||
+||HTMLUListElement.prototype.\_\_populate = HTMLOListElement.prototype.__populate = function (array listData, function callback=undefined) : HTMLUListElement|N/A - Polulate the list element. Callback can be used, for example. to style the list items.|
+|HTMLTableElement|||
+||HTMLTableElement.prototype.__populate (array tableHeaders, array (2D) tableData, function callback=undefined) : HTMLTableElement|N/A - Populate the table element.|
+||HTMLTableElement.prototype.__sort (HTMLTableCellElement (TH) headerElement, int columnIndex) : void|NA - Sort table data by column|
+|HTMLInputElement|||
+||HTMLInputElement.prototype.__val(newValue=undefiened) : string\|HTMLInputElement |JQuery.val ()|
+|HTMLCollection|||
+||HTMLCollection.prototype.__toArray (void) : array|N/A (uses Array.prototype.slice.call)|
+|Array||
+||Array.\_\_proto__.__range = function (int start, int end, int step = 1) : array | Python.range() - Object method|
+|Date|
+||Date.prototype.__calcAge (void) : int|N/A|
+||Date.prototype.__numDays (void) : unsigned int|N/A - Instance method|
+||Date.\_\_proto__.numdays (unsigned int month, unsigned int year=undefined) : unsigned int|N/A - Object method|
+|String|||
+||String.prototype.__isNumber (void) : bool|N/A - Checks if the string is a valid number|
+||String.prototype.__ucfirst (void) : string|N/A - Uppercase the first letter| 
+|JSON|||
+||JSON.\_\_proto__.__get = async (@string url) : Promise|N/A - uses fetch () and Promise ()|
 
 ## Usage (Example)
 ```
