@@ -235,7 +235,7 @@ HTMLElement.prototype.__html = function(/*@string*/ newHTML /*@=undefined*/) {
  * callback allows the caller to modify the ListElement and its LIElement
  **********/
 /*@HTMLUListElement|@HTMLOListElement*/
-HTMLUListElement.prototype.__populate = HTMLOListElement.prototype.__populate = function (/*@string*/ listData, /*@function*/ callback /*@=undefined*/) {
+HTMLUListElement.prototype.__populate = HTMLOListElement.prototype.__populate = function (/*@array*/ listData, /*@function*/ callback /*@=undefined*/) {
     if (!Array.isArray (listData)) {
         return this;
     }
@@ -442,7 +442,7 @@ HTMLCollection.prototype.__toArray = NodeList.prototype.__toArray = function () 
  * the range does not include "end"
  **********/
 /*@array (int)*/
-Array.__range = function (/*@int*/ start, /*@int*/ end, /*@int*/ by) {
+Array.__proto__.__range = function (/*@int*/ start, /*@int*/ end, /*@int*/ by) {
     // coerce to integer
     start = parseInt(start);
     end = parseInt(end);
@@ -521,7 +521,7 @@ Date.prototype.__numDays = function () {
  *** (Notice) this is an Object method ***
  **********/
 /*@unsigned int|undefined*/
-Date.__proto__.__numDays = function (/*@unsigned int*/ month, /*unsigned int*/ year) {
+Date.__proto__.__numDays = function (/*@unsigned int*/ month, /*unsigned int*/ year /*=undefined*/) {
 
     switch (month) {
         case 1:
