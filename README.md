@@ -198,7 +198,7 @@ A comparison test between vanila JS and Mimic JS with the below code.
     console.log (count);
 </script>
 ```
-In terms of the processing speed, vanila JS was 1.5 times faster than Mimic JS. As for the other factors, such as readability or maintainability, it's totally up to you and those factor might offset the drawback?
+In terms of the processing speed, vanila JS was ***1.5 times faster*** than Mimic JS. As for the other factors, such as readability or maintainability, it's totally up to you and those factor might offset the drawback?
 
 
 ## Resources
