@@ -157,6 +157,50 @@ let table = document.createElement ("table")
 });
 ```
 
+## Performance
+A comparison test between vanila JS and Mimic JS with the below code.
+```
+<script>
+    var start = new Date ().getTime ();
+    var count = 0;
+    do {
+        // vanila JS
+        let p1 = document.createElement ("p");
+        p1.innerHTML = "this is a <em>test</em>.";
+        p1.setAttribute("class", "class1");
+        p1.style.color = "#369";
+        p1.style.borderBottom = "solid 1px #ddd";
+        let p2 = document.createElement ("p");
+        p2.innerHTML = "this is a <em>test</em>.";
+        p2.setAttribute("class", "class1");
+        p2.style.color = "#369";
+        p2.style.borderBottom = "solid 1px #ddd";
+        document.body.appendChild (p1);
+        document.body.appendChild (p2);
+        
+        // Mimic JS
+        let p1 = document.createElement ("p")
+        .__html ("this is a <em>test</em>.")
+        .__attr ("class", "class1")
+        .__css ({ "color" : "#369", "border-bottom" : "solid 1px #ddd" });
+        
+        let p2 = document.createElement ("p")
+        .__html ("this is a <em>test</em>.")
+        .__attr ("class", "class1")
+        .__css ({ "color" : "#369", "border-bottom" : "solid 1px #ddd" });
+        
+        document.body.__appendChildren ([p1, p2]);
+        
+        count++;
+        var now = new Date ().getTime ();
+    } while (now - start < 500);
+
+    console.log (count);
+</script>
+```
+In terms of the processing speed, vanila JS was 1.5 times faster than Mimic JS. As for the other factors, such as readability or maintainability, it's totally up to you and those factor might offset the drawback?
+
+
 ## Resources
 - [Demo page](https://kotarow.github.io/MimicJS/mimicdemo.html)
 - [Source code](https://kotarow.github.io/MimicJS/mimic.js)
