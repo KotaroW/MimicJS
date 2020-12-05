@@ -87,7 +87,7 @@
             .__text ("Table");
             
             let p = document.createElement ("p")
-            .__text ("This example build a HTML table. The table headers are clickable to sort the data. The sort method has been prototyped to HTMLTableElement.");
+            .__text ("This example builds a HTML table. The table headers are clickable to sort the data. The sort method has been prototyped to HTMLTableElement.");
             
             // append those two elements created above
             section1.__appendChildren ([h2, p]);
@@ -177,11 +177,60 @@
             
         }
 
+        { // section2
+            // you can manage elements this way
+            let elements = {
+                header : document.createElement ("h2")
+                .__text ("CSS"),
+                blurb : document.createElement ("p")
+                .__html ("You can create CSS (and classes) like ..."),
+                h31 : document.createElement ("h3")
+                .__html ("&lt;style&gt; tag")
+                .__attr ("class", "test-class"),
+                cssParagraph : document.createElement ("p")
+                .__html ("Those code elements have been styled by:"),
+                cssCode : document.createElement("pre")
+                .__html ('<code>let css = new __CSS ("body > section:nth-of-type(3) pre", { background : "#ddd", padding : "1rem", "border-radius" : "2px"  }, "style-id");\ncss.__appendCSS ();</code>'),
+                h32 : document.createElement ("h3")
+                .__text ("CSS Class")
+                .__attr ("class", "test-class"),
+                cssClassParagraph : document.createElement ("p")
+                .__html ("You can also create CSS classes with <code>__CssClass ()</code>. Let's color h3 elements with red."),
+                cssClassCode : document.createElement("pre")
+                .__html ('<code>let testClass = new __CssClass ("test-class", "color : red", "test-class");\ntestClass.__appendCSS ()</code>'),
+                h33 : document.createElement ("h3")
+                .__text ("CSS Animation")
+                .__attr ({class : "test-class"}),
+                cssAnimationParagraph : document.createElement ("p")
+                .__html ("This paragraph element has been animated by this:")
+                .__attr ({id : "test-para"}),
+                cssAnimationCode : document.createElement("pre")
+                .__html ('<code>let animation = new __CssAnimation ("Monkey", "0% { color: #fff; } 100% { color: #333; }", "test-animation");\nanimation.__appendCSS ();\ndocument.__$id ("test-para").__css ("animation", animation.animationName + " 3s ease-in-out infinite alternate");</code>')
+            };
+            
+            // create a style tag and append to <body>
+            let css = new __CSS ("body > section:nth-of-type(3) pre", { background : "#eee", padding : "1rem", "border-radius" : "2px"  }, "style-id");
+            css.__appendCSS ();
+            
+            // create test-class class
+            let testClass = new __CssClass ("test-class", "color : red", "test-class");
+            testClass.__appendCSS ();
+            
+            document.__$query ("body > section:nth-of-type(3)")
+                .__appendChildren (Object.values (elements));
+            
+            // create animation
+            let animation = new __CssAnimation ("Monkey", "0% { color: #fff; } 100% { color: #333; }", "test-animation");
+            animation.__appendCSS ();
+            document.__$id ("test-para").__css ("animation", animation.animationName + " 3s ease-in-out infinite alternate");
+            
+        }
+        
         {// styling
 
             document.body.__css ({
                 margin : "0",
-                padding : "0 1rem"
+                padding : "1rem"
             });
             
             // single element
