@@ -596,3 +596,109 @@ JSON.__proto__.__get = async (/*@string*/ url) => {
         return Promise.reject (response);
     }
 };
+
+
+/********************
+ * __CSS class - experimental
+ ***if the "style" argument is an object, the object keys must be valid css property name. ***
+ * e.g. "font-weight" not "fontWeight"
+ ********************/
+/***
+ * constructor
+ ***/
+function __CSS (/*@string*/ selector, /*@string|@object*/ style, /*@string*/ styleId /*=undefined*/) {
+    
+    this.selector = selector;
+    this.style = style;
+    // styleId is used to identify the <style> tag which will be appended to the document.
+    this.styleId = styleId || null;
+    
+}
+/*@string|null*/
+__CSS.prototype.__toCSS = function (/*@void*/) {
+    var styleType = (typeof this.style).toLocaleLowerCase ();
+    var selectorName = (this.animationName ? "@keyframes " + this.animationName : (this.cssClassName ? "." + this.cssClassName : this.selector));
+    
+    
+    if (styleType == "string") {
+        // check to see if the style string meet the minimum criteria
+        if (/^\s*{.+}$/.test (this.style)) {
+            return selectorName + this.style;
+        } else {
+            return selectorName + "{" + this.style + "}";
+        }
+    }
+    // assuming it's { "property" : "property value" } format 
+    else if (styleType == "object") {
+        return selectorName + this.__getStyleString ();   
+    }
+    else {
+        return null;
+    }
+};
+/*@string*/
+__CSS.prototype.__getStyleString = function (/*@void*/) {
+    var styleString = "{";
+    
+    for (let key in this.style) {
+        styleString += key + ":" + this.style[key] + ";";
+    }
+    
+    styleString += "}";
+    return styleString;
+    
+};
+/*@void*/
+__CSS.prototype.__appendCSS = function (/*@string*/ additionalCss /*=undefined*/) {
+    // Assuming there is always a <head> tag in the document.
+    
+    let headElement = document.querySelector ("head");
+    let styleElement = document.createElement ("style");
+    
+    // add the style to the element
+    styleElement.textContent = this.__toCSS () + (additionalCss ? additionalCss : "");
+    
+    if (this.styleId) {
+        styleElement.setAttribute ("id", this.styleId);
+    }
+    
+    headElement.appendChild (styleElement);
+};
+
+/*@void*/
+__CSS.prototype.__removeCSS = function (/*@void*/) {
+    // we need styleId to locate the CSS
+    // and assume it's in <head> element
+    if (this.styleId) {
+        document.querySelector ("head").removeChild (document.getElementById (this.styleId));
+    }
+    
+}
+
+ /********************
+  * __CssClass class
+  * @parent: __CSS
+  ********************/
+function __CssClass (/*@string*/ cssClassName, /*@string|@object*/ style, /*@string*/ styleId) {
+    this.base = __CSS;
+    this.base (null, style, styleId);
+	this.cssClassName = cssClassName;
+}
+__CssClass.prototype = new __CSS;
+
+
+/********************
+ * __CssAnimation class
+ * @parent: __CSS
+ ********************/
+/***
+ * constructor
+ ***/
+function __CssAnimation (/*@string*/ animationName, /*@string*/animationFrames, /*@string*/ animationId /*=undefined*/) {
+    this.base = __CSS;
+    this.base (null, animationFrames, animationId);
+    
+	this.animationName = animationName;
+    
+}
+__CssAnimation.prototype = new __CSS;
